@@ -1,3 +1,16 @@
+let buttons = document.querySelectorAll("button");
+let display = document.querySelector(`.screen`);
+
+console.log(buttons);
+console.log(display);
+
+buttons.forEach((btn) => {
+  btn.addEventListener("click", function (e) {
+    console.log(e);
+    display.textContent += e.target.innerHTML;
+  });
+});
+
 function add(a, b) {
   return a + b;
 }
@@ -25,3 +38,9 @@ function operate(a, o, b) {
     divide(a, b);
   }
 }
+
+// function screen{
+
+// }
+
+// activateBtns();
