@@ -13,12 +13,21 @@
   height: 550px;
   background-color: grey;
 }
-
+.small-screen {
+  background-color: white;
+  border: 1px solid black;
+  border-bottom: none;
+  width: 90%;
+  padding: 5px;
+  text-align: right;
+  height: 30px;
+}
 .screen {
   width: 90%;
   height: 50px;
   margin: 0 auto;
   border: 1px solid black;
+  border-top: none;
   text-align: right;
   font-size: 32px;
   padding: 5px;
