@@ -3,18 +3,10 @@ const numButtons = document.querySelectorAll("button");
 const display = document.querySelector(`.screen`);
 
 const calculate = (n1, operator, n2) => {
-  let result = "";
-  if (operator === "plus") {
-    result = parseFloat(n1) + parseFloat(n2);
-  } else if (operator === "minus") {
-    result = parseFloat(n1) - parseFloat(n2);
-  } else if (operator === "multiply") {
-    result = parseFloat(n1) * parseFloat(n2);
-  } else if (operator === "divide") {
-    result = parseFloat(n1) / parseFloat(n2);
-  }
-
-  return result;
+  if (operator === "plus") return firstNum + parseFloat(n2);
+  if (operator === "minus") return parseFloat(n1) - parseFloat(n2);
+  if (operator === "multiply") return parseFloat(n1) * parseFloat(n2);
+  if (operator === "divide") return parseFloat(n1) / parseFloat(n2);
 };
 
 numButtons.forEach((btn) => {
@@ -36,10 +28,21 @@ numButtons.forEach((btn) => {
       calculator.dataset.previousKeyType = `clear`;
       display.textContent = "0";
     }
+    if (action === "all-clear") {
+      calculator.dataset.firstValue = "";
+      calculator.dataset.modValue = "";
+      calculator.dataset.operator = "";
+      calculator.dataset.previousKeyType = "";
+      display.textContent = "0";
+      calculator.dataset.previousKeyType = "clear";
+    }
     if (action === "decimal") {
       if (!displayedNum.includes(`.`)) {
         display.textContent = displayedNum + `.`;
-      } else if (previousKeyType === `decimal`) {
+      } else if (
+        previousKeyType === `operator` ||
+        previousKeyType === `calculate`
+      ) {
         display.textContent = `0.`;
       }
       calculator.dataset.previousKeyType = `decimal`;
@@ -55,7 +58,12 @@ numButtons.forEach((btn) => {
       const operator = calculator.dataset.operator;
       const secondValue = displayedNum;
 
-      if (firstValue && operator && previousKeyType !== `operator`) {
+      if (
+        firstValue &&
+        operator &&
+        previousKeyType !== `operator` &&
+        previousKeyType !== `calculate`
+      ) {
         const calcValue = calculate(firstValue, operator, secondValue);
         display.textContent = calcValue;
         calculator.dataset.firstValue = calcValue;
@@ -66,15 +74,22 @@ numButtons.forEach((btn) => {
       calculator.dataset.operator = action;
     }
     if (action === `equals`) {
-      calculator.dataset.previousKeyType = `equals`;
-      const firstValue = calculator.dataset.firstValue;
+      let firstValue = calculator.dataset.firstValue;
       const operator = calculator.dataset.operator;
-      const secondValue = displayedNum;
-
-      //   calculator.dataset.secondValue = displayedNum;
-      //   console.log(firstValue + secondValue);
+      let secondValue = displayedNum;
       console.log(firstValue, operator, secondValue);
-      display.textContent = calculate(firstValue, operator, secondValue);
+      if (firstValue) {
+        if (previousKeyType === `equals`) {
+          firstValue = displayedNum;
+          secondValue = calculator.dataset.modValue;
+        }
+        display.textContent = calculate(firstValue, operator, secondValue);
+
+        // calculator.dataset.firstValue = calcValue;
+        calculator.dataset.modValue = secondValue;
+        calculator.dataset.previousKeyType = `equals`;
+        //   calculator.dataset.operator = null;
+      }
     }
   });
 });
