@@ -15,7 +15,7 @@ const getKeyType = (key) => {
   const { action } = key.dataset;
   if (!action) return `number`;
   if (
-    action === "add" ||
+    action === "plus" ||
     action === "subtract" ||
     action === "multiply" ||
     action === "divide"
@@ -26,39 +26,28 @@ const getKeyType = (key) => {
 
 const createResultString = (key, displayedNum, state) => {
   const value = key.textContent;
-  const action = key.dataset.action;
-  const firstValue = state.firstValue;
-  const modValue = state.modValue;
-  const operator = state.operator;
-  const previousKeyType = state.previousKeyType;
-  //Variables
-  //1. keyContent
-  //2. displayedNum
-  //3. previousKeyType
-  //4. action
-  //5. calculator.dataset.firstValue
-  //6. calculator.dataset.operator
-  //7. calculator.dataset.modValue
+  const keyType = getKeyType(key);
+  const { firstValue, operator, modValue, previousKeyType } = state;
 
   if (keyType === `number`) {
-    return displayedNum === `0` || previousKeyType === `operator`
+    return displayedNum === `0` ||
+      previousKeyType === `operator` ||
+      previousKeyType === `equals`
       ? value
       : displayedNum + value;
   }
+
   if (keyType === "decimal") {
     if (!displayedNum.includes(`.`)) return displayedNum + `.`;
-    if (previousKeyType === `operator` || previousKeyType === `calculate`)
+    if (previousKeyType === `operator` || previousKeyType === `equals`)
       return `0.`;
     return displayedNum;
   }
-  calculator.dataset.previousKeyType = `decimal`;
   if (keyType === `operator`) {
-    const firstValue = calculator.dataset.firstValue;
-    const operator = calculator.dataset.operator;
     return firstValue &&
       operator &&
       previousKeyType !== `operator` &&
-      previousKeyType !== `calculate`
+      previousKeyType !== `equals`
       ? calculate(firstValue, operator, displayedNum)
       : displayedNum;
   }
@@ -67,9 +56,6 @@ const createResultString = (key, displayedNum, state) => {
   if (keyType === "all-clear") return 0;
 
   if (keyType === `equals`) {
-    let firstValue = calculator.dataset.firstValue;
-    const operator = calculator.dataset.operator;
-    let secondValue = displayedNum;
     return firstValue
       ? previousKeyType === `equals`
         ? calculate(displayedNum, operator, modValue)
@@ -78,96 +64,52 @@ const createResultString = (key, displayedNum, state) => {
   }
 };
 
-const updateCalculatorState = () => {};
+const updateCalculatorState = (
+  key,
+  calculator,
+  calculatedValue,
+  displayedNum
+) => {
+  const keyType = getKeyType(key);
+  const { firstValue, operator, modValue, previousKeyType } =
+    calculator.dataset;
+
+  calculator.dataset.previousKeyType = keyType;
+
+  if (keyType === "operator") {
+    calculator.dataset.operator = key.dataset.action;
+    calculator.dataset.firstValue =
+      firstValue &&
+      operator &&
+      previousKeyType !== `operator` &&
+      previousKeyType !== `equals`
+        ? calculatedValue
+        : displayedNum;
+  }
+  if (keyType === "all-clear") {
+    calculator.dataset.firstValue = "";
+    calculator.dataset.modValue = "";
+    calculator.dataset.operator = "";
+    calculator.dataset.previousKeyType = "";
+  }
+  if (keyType === "equals") {
+    calculator.dataset.modValue =
+      firstValue && previousKeyType === `equals` ? modValue : displayedNum;
+  }
+};
 
 numButtons.forEach((btn) => {
   btn.addEventListener("click", (e) => {
-    if (e.target.matches(`buttton`)) return;
+    // if (e.target.matches(`button`)) return;
+    const key = btn;
+    console.log(e.target, btn);
     const displayedNum = display.textContent;
     const resultString = createResultString(
-      e.target,
+      key,
       displayedNum,
       calculator.dataset
     );
-    //     const key = e.target;
-    //     const action = key.dataset.action;
-    //     const previousKeyType = calculator.dataset.previousKeyType;
-    //     const displayedNum = display.textContent;
-    //     const value = e.target.textContent;
-    //     if (!action) {
-    //       if (displayedNum === `0` || previousKeyType === `operator`) {
-    //         display.textContent = value;
-    //       } else {
-    //         display.textContent = displayedNum + value;
-    //       }
-    //       calculator.dataset.previousKeyType = `number`;
-    //     }
-    //     if (action === "clear") {
-    //       calculator.dataset.previousKeyType = `clear`;
-    //       display.textContent = "0";
-    //     }
-    //     if (action === "all-clear") {
-    //       calculator.dataset.firstValue = "";
-    //       calculator.dataset.modValue = "";
-    //       calculator.dataset.operator = "";
-    //       calculator.dataset.previousKeyType = "";
-    //       display.textContent = "0";
-    //       calculator.dataset.previousKeyType = "clear";
-    //     }
-    //     if (action === "decimal") {
-    //       if (!displayedNum.includes(`.`)) {
-    //         display.textContent = displayedNum + `.`;
-    //       } else if (
-    //         previousKeyType === `operator` ||
-    //         previousKeyType === `calculate`
-    //       ) {
-    //         display.textContent = `0.`;
-    //       }
-    //       calculator.dataset.previousKeyType = `decimal`;
-    //     }
-
-    //     if (
-    //       action === "plus" ||
-    //       action === "minus" ||
-    //       action === "multiply" ||
-    //       action === "divide"
-    //     ) {
-    //       const firstValue = calculator.dataset.firstValue;
-    //       const operator = calculator.dataset.operator;
-    //       const secondValue = displayedNum;
-
-    //       if (
-    //         firstValue &&
-    //         operator &&
-    //         previousKeyType !== `operator` &&
-    //         previousKeyType !== `calculate`
-    //       ) {
-    //         const calcValue = calculate(firstValue, operator, secondValue);
-    //         display.textContent = calcValue;
-    //         calculator.dataset.firstValue = calcValue;
-    //       } else {
-    //         calculator.dataset.firstValue = displayedNum;
-    //       }
-    //       calculator.dataset.previousKeyType = `operator`;
-    //       calculator.dataset.operator = action;
-    //     }
-    //     if (action === `equals`) {
-    //       let firstValue = calculator.dataset.firstValue;
-    //       const operator = calculator.dataset.operator;
-    //       let secondValue = displayedNum;
-    //       console.log(firstValue, operator, secondValue);
-    //       if (firstValue) {
-    //         if (previousKeyType === `equals`) {
-    //           firstValue = displayedNum;
-    //           secondValue = calculator.dataset.modValue;
-    //         }
-    //         display.textContent = calculate(firstValue, operator, secondValue);
-
-    //         // calculator.dataset.firstValue = calcValue;
-    //         calculator.dataset.modValue = secondValue;
-    //         calculator.dataset.previousKeyType = `equals`;
-    //         //   calculator.dataset.operator = null;
-    //       }
-    //     }
+    display.textContent = resultString;
+    updateCalculatorState(key, calculator, resultString, displayedNum);
   });
 });
