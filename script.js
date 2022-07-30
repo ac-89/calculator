@@ -3,10 +3,12 @@ const numButtons = document.querySelectorAll("button");
 const display = document.querySelector(`.screen`);
 
 const calculate = (n1, operator, n2) => {
-  if (operator === "plus") return firstNum + parseFloat(n2);
-  if (operator === "minus") return parseFloat(n1) - parseFloat(n2);
-  if (operator === "multiply") return parseFloat(n1) * parseFloat(n2);
-  if (operator === "divide") return parseFloat(n1) / parseFloat(n2);
+  const firstNum = parseFloat(n1);
+  const secondNum = parseFloat(n2);
+  if (operator === "plus") return firstNum + secondNum;
+  if (operator === "minus") return firstNum - secondNum;
+  if (operator === "multiply") return firstNum * secondNum;
+  if (operator === "divide") return firstNum / secondNum;
 };
 
 numButtons.forEach((btn) => {
