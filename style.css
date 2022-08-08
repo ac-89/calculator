@@ -13,15 +13,6 @@
   height: 480px;
   background-color: grey;
 }
-/* .small-screen {
-  background-color: white;
-  border: 1px solid black;
-  border-bottom: none;
-  width: 90%;
-  padding: 5px;
-  text-align: right;
-  height: 30px;
-} */
 .screen {
   width: 90%;
   height: 50px;
@@ -45,10 +36,6 @@
   display: flex;
   width: 90%;
   flex-grow: 1;
-  /* height: 100%; */
-  /* justify-content: center; */
-  /* align-items; */
-  /* height: 400px; */
 }
 
 .numbers {
